@@ -2,57 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Script : MonoBehaviour
 {
-    [SerializeField] public int width, height, increment, _SweetSpot;
-    [SerializeField] public GameObject TileSquare, SweetTile;
-   [SerializeField] public Sprite MajorRed, PartialOrange, MinorYellow;
-    [SerializeField] public SpriteRenderer sprite_TileSquare;
-    
-    
-    
-    // Start is called before the first frame update
-    void Start()
+    public Sprite sprite;
+    public float[,] Grid;
+    int Height, Width, Column, Row;
+    private void Start()
     {
-        int Rand = Random.Range(1, 25);
-        
-        
-        sprite_TileSquare = TileSquare.GetComponent<SpriteRenderer>();
-        MakeGrid();
-        SweetSpot();
-            void MakeGrid()
-            {
-            _SweetSpot = Rand;
-            print(_SweetSpot);
-            for (int x = 0; x < width; x++)
-                {
-                for (int y = 0; y < height; y++)
-                {
-
-                    var CurrentTile = Instantiate(TileSquare, new Vector2(x, y), Quaternion.identity);
-                   
-                    if (y == _SweetSpot)
-                    {
-                        var SweetSpotTile = Instantiate(SweetTile, new Vector2(x, y), Quaternion.identity);
-                    }
-                    if (x == _SweetSpot)
-                    {
-                        var SweetSpotTile = Instantiate(SweetTile, new Vector2(x, y), Quaternion.identity);
-                    }
-
-                }
-                }
-
-            }
-        void SweetSpot()
+        Height = (int)Camera.main.orthographicSize;
+        Width = Height * (Screen.width / Screen.height);
+        Column = Width * 2;
+        Row = Height * 2;
+        Grid = new float[Column, Row];
+        for (int i = 0; i < Column; i++)
         {
-          
-
-
+            for (int j= 0; j<Row; j++)
+            {
+                Grid[i, j] = Random.Range(0.0f, 1.0f);
+                SpawnTile(i,j, Grid[i,j]);
+            }
         }
-        
     }
 
+    private void SpawnTile(int x, int y, float value)
+    {
+        GameObject g = new GameObject("X: " +x+"y "+y );
+        g.transform.position = new Vector3(x - (Width - 0.5f), y - (Height - 0.5f));
+        var s = g.AddComponent<SpriteRenderer>();
+        s.sprite = sprite;
+        s.color = new Color(value, value, value);
+    }
     // Update is called once per frame
     private void Update()
     {
